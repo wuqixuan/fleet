@@ -227,15 +227,16 @@ func (e *Engine) Trigger() {
 }
 
 func (e *Engine) clusterState() (*clusterState, error) {
-	units, err := e.registry.Units()
+//	units, err := e.registry.Units()
+	units, sUnits, err := e.registry.UnitsAndSchedule()
 	if err != nil {
-		log.Errorf("Failed fetching Units from Registry: %v", err)
-		return nil, err
-	}
-
-	sUnits, err := e.registry.Schedule()
-	if err != nil {
-		log.Errorf("Failed fetching schedule from Registry: %v", err)
+//		log.Errorf("Failed fetching Units from Registry: %v", err)
+//		return nil, err
+//	}
+//
+//	sUnits, err := e.registry.Schedule()
+//	if err != nil {
+		log.Errorf("Failed fetching Units or schedule from Registry: %v", err)
 		return nil, err
 	}
 

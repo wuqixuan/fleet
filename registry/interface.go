@@ -47,6 +47,7 @@ type UnitRegistry interface {
 	Unit(name string) (*job.Unit, error)
 	Units() ([]job.Unit, error)
 	UnitStates() ([]*unit.UnitState, error)
+	UnitsAndSchedule() ([]job.Unit, []job.ScheduledUnit, error)
 }
 
 type ClusterRegistry interface {

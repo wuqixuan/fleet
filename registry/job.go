@@ -32,7 +32,8 @@ const (
 )
 
 // Schedule returns all ScheduledUnits known by fleet, ordered by name
-func (r *EtcdRegistry) Schedule() ([]job.ScheduledUnit, error) {
+//func (r *EtcdRegistry) Schedule() ([]job.ScheduledUnit, error) {
+func (r *EtcdRegistry) registry() (*etcd.Response, error) {
 	key := r.prefixed(jobPrefix)
 	opts := &etcd.GetOptions{
 		Sort:      true,
@@ -43,9 +44,41 @@ func (r *EtcdRegistry) Schedule() ([]job.ScheduledUnit, error) {
 		if isEtcdError(err, etcd.ErrorCodeKeyNotFound) {
 			err = nil
 		}
-		return nil, err
+//		return nil, err
+	}
+	return res, err
+}
+
+func (r *EtcdRegistry) units(res *etcd.Response) ([]job.Unit, error) {
+	uMap := make(map[string]*job.Unit)
+	for _, dir := range res.Node.Nodes {
+		u, err := r.dirToUnit(dir)
+		if err != nil {
+			log.Errorf("Failed to parse Unit from etcd: %v", err)
+			continue
+		}
+		if u == nil {
+			continue
+		}
+		uMap[u.Name] = u
 	}
 
+	var sortable sort.StringSlice
+	for name, _ := range uMap {
+		sortable = append(sortable, name)
+	}
+	sortable.Sort()
+
+	units := make([]job.Unit, 0, len(sortable))
+	for _, name := range sortable {
+		units = append(units, *uMap[name])
+	}
+
+	return units, nil
+
+}
+
+func (r *EtcdRegistry) schedule(res *etcd.Response) ([]job.ScheduledUnit, error) {
 	heartbeats := make(map[string]string)
 	uMap := make(map[string]*job.ScheduledUnit)
 

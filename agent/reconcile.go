@@ -115,15 +115,16 @@ func (ar *AgentReconciler) Purge(a *Agent) {
 // desiredAgentState builds an *AgentState object that represents what the
 // provided Agent should currently be doing.
 func desiredAgentState(a *Agent, reg registry.Registry) (*AgentState, error) {
-	units, err := reg.Units()
+	//units, err := reg.Units()
+	units, sUnits, err:= reg.UnitsAndSchedule()
 	if err != nil {
-		log.Errorf("Failed fetching Units from Registry: %v", err)
-		return nil, err
-	}
-
-	sUnits, err := reg.Schedule()
-	if err != nil {
-		log.Errorf("Failed fetching schedule from Registry: %v", err)
+//		log.Errorf("Failed fetching Units from Registry: %v", err)
+//		return nil, err
+//	}
+//
+//	sUnits, err := reg.Schedule()
+//	if err != nil {
+		log.Errorf("Failed fetching Units or schedule from Registry: %v", err)
 		return nil, err
 	}
 

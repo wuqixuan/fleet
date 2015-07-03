@@ -88,6 +88,42 @@ func (f *FakeRegistry) Machines() ([]machine.MachineState, error) {
 	return f.machines, nil
 }
 
+func (f *FakeRegistry) UnitsAndSchedule() ([]job.Unit, []job.ScheduledUnit, error) {
++	f.RLock()
++	defer f.RUnlock()
++
++	var sorted sort.StringSlice
++	for _, j := range f.jobs {
++		sorted = append(sorted, j.Name)
++	}
++	sorted.Sort()
++
++	units := make([]job.Unit, len(f.jobs))
++	for i, jName := range sorted {
++		j := f.jobs[jName]
++		u := job.Unit{
++			Name:        j.Name,
++			Unit:        j.Unit,
++			TargetState: j.TargetState,
++		}
++		units[i] = u
++	}
++
++	sUnits := make([]job.ScheduledUnit, 0, len(f.jobs))
++	for _, jName := range sorted {
++		j := f.jobs[jName]
++		su := job.ScheduledUnit{
++			Name:            j.Name,
++			State:           j.State,
++			TargetMachineID: j.TargetMachineID,
++		}
++		sUnits = append(sUnits, su)
++	}
++
+	return units, sUnits, nil
+}
+
+
 func (f *FakeRegistry) Units() ([]job.Unit, error) {
 	f.RLock()
 	defer f.RUnlock()
