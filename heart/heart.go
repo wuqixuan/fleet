@@ -15,6 +15,7 @@
 package heart
 
 import (
+	"errors"
 	"time"
 
 	"github.com/coreos/fleet/machine"
@@ -35,7 +36,27 @@ type machineHeart struct {
 	mach machine.Machine
 }
 
+func (h *machineHeart) conflict() error {
+	machines, err := h.reg.Machines()
+	if err != nil {
+		return err
+	}
+	for _, ms := range machines {
+		if ms.ID == h.mach.State().ID {
+			if ms.PublicIP != h.mach.State().PublicIP {
+				err = errors.New("Machine ID already exists, it seems that there are machines with same machine-id in your cluster.")
+				return err
+			}
+		}
+	}
+	return nil
+}
+
 func (h *machineHeart) Beat(ttl time.Duration) (uint64, error) {
+	err := h.conflict()
+	if err != nil {
+		return uint64(0), err
+	}
 	return h.reg.SetMachineState(h.mach.State(), ttl)
 }
 

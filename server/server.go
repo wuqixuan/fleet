@@ -162,6 +162,7 @@ func (s *Server) Run() {
 		if err == nil {
 			break
 		}
+		log.Errorf("Error: %v", err)
 		time.Sleep(sleep)
 	}
 
