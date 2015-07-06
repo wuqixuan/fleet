@@ -115,6 +115,24 @@ Default: ""
 Comma-delimited key/value pairs that are published with the local to the fleet registry. This data can be used directly by a client of fleet to make scheduling decisions. An example set of metadata could look like:  
 
 	metadata="region=us-west,az=us-west-1"
+	metadata='region=us-west,az=us-west-1'
+	metadata=region=us-west,az=us-west-1
+
+Formally,the configuation of metadata should conform one of this three form:
+    
+	metadata="xxx"
+	metadata='xxx'
+	metadata=xxx
+
+while xxx is of the form:
+
+	yyy[,yyy[,yyy...]]
+
+while yyy if of the form:
+
+	key = value
+
+Space and tab are allow to appear beside '=' and ','. If give the same key in multiple pairs, the last value will take effect.
 
 Default: ""
 
