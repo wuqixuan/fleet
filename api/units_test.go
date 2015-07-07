@@ -601,7 +601,7 @@ func TestValidateOptions(t *testing.T) {
 				},
 				makeConflictUO("foo.service"),
 			},
-			false,
+			true,
 		},
 		{
 			[]*schema.UnitOption{
@@ -612,7 +612,7 @@ func TestValidateOptions(t *testing.T) {
 				},
 				makeConflictUO("bar.service"),
 			},
-			false,
+			true,
 		},
 		{
 			[]*schema.UnitOption{
